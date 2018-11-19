@@ -5,16 +5,15 @@ import Tweet from './Tweet';
 
 class Dashboard extends Component {
   render() {
-    const { tweets, tweetIds } = this.props;
+    const { tweetIds } = this.props;
     console.log('From Dashboard');
-    console.log(tweetIds);
 
     return (
       <ul className="list">
         <h2 className="heading-secondary">Your Timeline</h2>
-        {tweets.map((tweet) => {
+        {tweetIds.map((id) => {
           return (
-            <Tweet tweet={tweet} key={tweet.id}/>
+            <Tweet key={id} id={id}/>
           )
         })}
       </ul>
@@ -23,27 +22,10 @@ class Dashboard extends Component {
   }
 }
 
-const mapStateToProps = ({ tweets, users }) => {
-  const modifiedTweets = Object.keys(tweets)
-    .map((key) => tweets[key])
-    .map((tweet) => {
-      const author = tweet.author;
-      const avatarURL = users[author].avatarURL;
-      const authorName = users[author].name;
-      const replyId = tweet.replyingTo;
-      const replyAuthor = replyId ? tweets[replyId].author : null;
-    
-      return {
-        ...tweet, author: authorName, avatarURL, replyingTo: replyAuthor
-      }
-    })
-
-  const tweetIds = Object.keys(tweets)
-    .map((key) => tweets[key].id)
-  
+const mapStateToProps = ({ tweets }) => {
   return {
-    tweetIds,
-    tweets: modifiedTweets
+    tweetIds: Object.keys(tweets)
+      .sort((a, b) => tweets[b].timestamp - tweets[a].timestamp)
   }
 }
 
